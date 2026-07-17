@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quadro normativo per patologia</title>
+<style>
+  :root{
+    --blu:#1F4E79; --blu2:#2E75B6; --grigio:#5A5A5A;
+    --bg:#f6f7f9; --card:#ffffff; --bordo:#e2e6ea; --testo:#22272b;
+    --ok:#1a7f45; --okbg:#e7f5ec;
+    --warn:#9a6700; --warnbg:#fff6e0;
+    --bad:#a11c1c; --badbg:#fdecec;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Cambria,serif;background:var(--bg);color:var(--testo);line-height:1.55}
+
+  /* Lockup Renzo-ArtHome: identico a quello del catalogo delle patologie.
+     Il logo si inietta da logo.js e non si tocca mai. */
+  .brand{background:#fff;border-bottom:1px solid var(--bordo);padding:12px 22px 2px}
+  .rah{display:flex;align-items:center;gap:9px;margin:0 0 10px}
+  .rah>i{width:60px;height:40px;background:no-repeat center/contain;flex:none;display:inline-block}
+  .rah>b{font:700 17px/1 Georgia,'Times New Roman',serif;color:#1F4E79;letter-spacing:.3px}
+
+  header{background:var(--blu);color:#fff;padding:18px 22px}
+  header h1{margin:0;font-size:21px;font-weight:600;letter-spacing:.2px}
+  header p{margin:5px 0 0;font-size:13px;opacity:.85}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 22px 60px}
+
+  .tabs{display:flex;gap:4px;margin:0 0 18px;border-bottom:2px solid var(--bordo)}
+  .tab{padding:9px 16px;border:0;background:none;font:inherit;font-size:14px;color:var(--grigio);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+  .tab.on{color:var(--blu);font-weight:600;border-bottom-color:var(--blu2)}
+  .pane{display:none}
+  .pane.on{display:block}
+
+  .box{background:var(--card);border:1px solid var(--bordo);border-radius:8px;padding:16px;margin-bottom:16px}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--grigio);margin-bottom:6px;font-weight:600}
+  select,input[type=search]{width:100%;padding:10px 12px;border:1px solid var(--bordo);border-radius:6px;font:inherit;font-size:15px;background:#fff}
+  select:focus,input:focus{outline:2px solid var(--blu2);outline-offset:1px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip{padding:6px 12px;border:1px solid var(--bordo);border-radius:999px;background:#fff;font:inherit;font-size:13px;color:var(--grigio);cursor:pointer}
+  .chip.on{background:var(--blu2);border-color:var(--blu2);color:#fff}
+
+  .stato-fam{font-size:13px;padding:10px 12px;border-radius:6px;margin-top:12px;border:1px solid transparent}
+  .sf-censita{background:var(--okbg);border-color:#bfe3cd;color:var(--ok)}
+  .sf-parziale,.sf-quadro{background:var(--warnbg);border-color:#f0dca8;color:var(--warn)}
+  .sf-da-censire{background:var(--badbg);border-color:#f3c9c9;color:var(--bad)}
+
+  h2.fase{font-size:15px;color:var(--blu);margin:22px 0 4px;padding-bottom:5px;border-bottom:1px solid var(--bordo)}
+  h2.fase span{font-weight:400;color:var(--grigio);font-size:13px}
+
+  .n{background:var(--card);border:1px solid var(--bordo);border-left:4px solid var(--bordo);border-radius:6px;padding:12px 14px;margin-top:10px}
+  .n.ritirata{border-left-color:var(--bad);background:var(--badbg)}
+  .n.in-ritiro{border-left-color:var(--warn)}
+  .n.vigente{border-left-color:var(--ok)}
+  .n-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+  .n-sigla{font-weight:700;color:var(--blu);font-size:15px}
+  .badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+  .b-ok{background:var(--okbg);color:var(--ok)}
+  .b-warn{background:var(--warnbg);color:var(--warn)}
+  .b-bad{background:var(--badbg);color:var(--bad)}
+  .b-ger{background:#eef2f7;color:var(--blu)}
+
+  /* Bandierine: italiana vs internazionale.
+     Il tricolore e' disegnato in CSS e non con l'emoji bandiera, perche' su Windows
+     le emoji-bandiera non hanno il glyph nel font di sistema e si vedrebbe "IT". */
+  .b-naz{display:inline-flex;align-items:center;gap:5px}
+  .b-it{background:#eef7f0;color:#1a7f45}
+  .b-int{background:#eef2f7;color:var(--blu2)}
+  .fl{width:17px;height:12px;border:1px solid rgba(0,0,0,.22);border-radius:2px;flex:none;display:inline-block}
+  .fl-it{background:linear-gradient(to right,#009246 0 33.33%,#fff 33.33% 66.66%,#ce2b37 66.66% 100%)}
+  .fl-int{background:radial-gradient(circle at 50% 50%,#8ec5f0 0 55%,#2E75B6 55% 100%);position:relative;overflow:hidden}
+  .fl-int::before{content:"";position:absolute;inset:0;background:
+    linear-gradient(to bottom,transparent 45%,rgba(255,255,255,.85) 45% 55%,transparent 55%),
+    linear-gradient(to right,transparent 45%,rgba(255,255,255,.85) 45% 55%,transparent 55%)}
+  .n-tit{font-size:13px;color:var(--grigio);font-style:italic;margin:3px 0 6px}
+  .n-cosa{font-size:14px;margin:0 0 8px}
+  .n-perche{font-size:14px;background:#f4f8fc;border-left:3px solid var(--blu2);padding:8px 10px;border-radius:0 4px 4px 0;margin:8px 0}
+  .n-perche b{color:var(--blu)}
+  .n-nota{font-size:13px;color:var(--bad);font-weight:600;margin:6px 0}
+  .n-ambito{font-size:13px;color:var(--warn);margin:6px 0}
+  .n-fonte{font-size:12px;color:#8a9099;margin-top:8px;padding-top:7px;border-top:1px dashed var(--bordo)}
+
+  .avvisi{background:var(--badbg);border:1px solid #f3c9c9;border-radius:8px;padding:14px 16px;margin-bottom:16px}
+  .avvisi h3{margin:0 0 8px;font-size:14px;color:var(--bad)}
+  .avvisi ul{margin:0;padding-left:18px;font-size:14px}
+  .avvisi li{margin-bottom:5px}
+
+  .vuoto{padding:26px;text-align:center;color:var(--grigio);font-size:14px}
+  .conta{font-size:13px;color:var(--grigio);margin:14px 0 0}
+  .filtri-reg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+  .legenda{font-size:13px;color:var(--grigio);margin-top:10px}
+  .legenda b{color:var(--testo)}
+  footer{border-top:1px solid var(--bordo);margin-top:34px;padding-top:14px;font-size:12px;color:#8a9099}
+  @media(max-width:640px){.filtri-reg{grid-template-columns:1fr}.wrap{padding:14px}}
+</style>
+</head>
+<body>
+
+<div class="brand"><div class="rah"><i></i><b>Renzo-ArtHome</b></div></div>
+
+<header>
+  <h1>Quadro normativo per patologia</h1>
+  <p>Scegli il problema: escono le norme coinvolte, divise per fase, con lo stato e il motivo del collegamento.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs">
+    <button class="tab on" data-p="p1">Ho questo problema</button>
+    <button class="tab" data-p="p2">Registro delle norme</button>
+    <button class="tab" data-p="p3">Come si legge</button>
+  </div>
+
+  <!-- ============ PANE 1: problema -> norme ============ -->
+  <div class="pane on" id="p1">
+    <div class="box">
+      <label for="fam">Famiglia di patologia (le stesse 42 del catalogo)</label>
+      <select id="fam"></select>
+      <div class="chips" id="chipFasi"></div>
+      <div id="statoFam"></div>
+    </div>
+    <div id="avvisi"></div>
+    <div id="out"></div>
+  </div>
+
+  <!-- ============ PANE 2: registro ============ -->
+  <div class="pane" id="p2">
+    <div class="box">
+      <label for="q">Cerca nel registro (sigla, titolo, oggetto)</label>
+      <input type="search" id="q" placeholder="es. 11085, radon, sali, iniezione, interrati">
+      <div class="filtri-reg">
+        <div>
+          <label for="fStato">Stato</label>
+          <select id="fStato">
+            <option value="">Tutti</option>
+            <option value="vigente">Solo vigenti</option>
+            <option value="ritirata">Solo ritirate</option>
+            <option value="in-ritiro">Solo in ritiro</option>
+          </select>
+        </div>
+        <div>
+          <label for="fGer">Gerarchia</label>
+          <select id="fGer">
+            <option value="">Tutte</option>
+            <option value="cogente">Cogente (legge, decreto)</option>
+            <option value="volontaria">Volontaria (UNI/EN/ISO)</option>
+            <option value="estera">Buona pratica (BS, DIN, WTA...)</option>
+          </select>
+        </div>
+        <div>
+          <label for="fNaz">Provenienza</label>
+          <select id="fNaz">
+            <option value="">Tutte</option>
+            <option value="it">Solo italiane</option>
+            <option value="int">Solo internazionali</option>
+          </select>
+        </div>
+      </div>
+      <p class="conta" id="conta"></p>
+    </div>
+    <div id="reg"></div>
+  </div>
+
+  <!-- ============ PANE 3: metodo ============ -->
+  <div class="pane" id="p3">
+    <div class="box">
+      <h2 class="fase">Che cosa fa questo strumento</h2>
+      <p>Parte dal problema e restituisce il quadro normativo di quel problema, diviso per fase (diagnosi, progetto, prodotti, esecuzione, collaudo). Per ogni norma dice tre cose che un elenco non dice: <b>lo stato</b> (vigente, in ritiro, ritirata), <b>la gerarchia</b> (cogente, volontaria, buona pratica) e <b>il motivo</b> per cui quella norma c'entra con quel problema.</p>
+
+      <h2 class="fase">Le due regole che lo rendono utilizzabile</h2>
+      <p><b>1. Niente invenzioni.</b> Ogni norma qui dentro viene da un registro di verifica già costruito: audit delle citazioni, controlli su fonte primaria, verifiche avversariali. Ogni voce porta scritto da dove viene la conferma. Se non c'era verifica, la voce non è entrata.</p>
+      <p><b>2. Il vuoto si dichiara.</b> Le famiglie che non abbiamo ancora censito sono marcate <b>da censire</b> invece che riempite a sensazione. Una scheda onesta che dice "qui non ho verificato" vale più di una scheda piena di norme plausibili.</p>
+
+      <h2 class="fase">Il secondo uso: le norme ritirate</h2>
+      <p>Lo strumento segnala anche le norme che circolano ancora nelle relazioni ma sono ritirate o fuori ambito. In contraddittorio questo vale quanto l'elenco delle norme buone. Le principali già censite: <b>UNI 11121</b> (carburo di calcio, ritirata 03/04/2025), <b>UNI 11087</b> (sali, ritirata 29/09/2016), <b>UNI 10339</b> (ventilazione, ritirata 04/07/2024), <b>UNI 11444</b> (acustica, ritirata 11/09/2025).</p>
+
+      <h2 class="fase">La bandierina: italiane e internazionali</h2>
+      <p>Ogni norma porta la sua provenienza, perché in una relazione pesano in modo diverso.</p>
+      <p class="legenda">
+        <span class="badge b-naz b-it"><i class="fl fl-it"></i>Italiana</span>
+        leggi e decreti nazionali (DM, DPCM, DPR, D.Lgs), norme regionali e regolamenti comunali,
+        e le UNI puramente nazionali, cioè quelle con il numero attaccato alla sigla (UNI 11085, UNI 11182, UNI 11367).
+      </p>
+      <p class="legenda">
+        <span class="badge b-naz b-int"><i class="fl fl-int"></i>Internazionale</span>
+        le EN, ISO ed EN ISO, <b>anche quando sono recepite in Italia come UNI EN</b> (la UNI EN ISO 13788 resta una norma internazionale
+        adottata da UNI), più le norme estere nazionali (BS britanniche, DIN tedesche, WTA, ASTM statunitensi) e i riferimenti
+        di organismi internazionali (BRE, ICOMOS, ASHRAE, WHO, ICRP).
+      </p>
+      <p class="legenda">La bandierina dice <b>da dove viene</b> la norma, non quanto obbliga: per l'obbligo c'è la gerarchia (cogente, volontaria, buona pratica). Una EN recepita come UNI EN e richiamata da un decreto può obbligare più di una UNI nazionale mai richiamata.</p>
+
+      <h2 class="fase">Come si legge lo stato di una famiglia</h2>
+      <p class="legenda">
+        <b>Censita</b>: dominio verificato voce per voce, il quadro è completo.<br>
+        <b>Parziale</b>: alcune norme verificate, altre ancora da censire. Utilizzabile, ma non è l'elenco esaustivo.<br>
+        <b>Quadro</b>: solo il riferimento generale (NTC, Eurocodici). Il dettaglio va citato dal progetto specialistico.<br>
+        <b>Da censire</b>: nessuna norma di famiglia verificata. Non usare questa scheda come quadro normativo.
+      </p>
+
+      <h2 class="fase">Dove vive il dato</h2>
+      <p>Il contenuto sta in due file separati dall'interfaccia: <b>norme.js</b> (il registro) e <b>mapping.js</b> (i collegamenti problema-norme, scritti sulle stesse 42 famiglie del catalogo). Questo permette di innestare gli stessi dati altrove senza rifare il lavoro.</p>
+    </div>
+  </div>
+
+  <footer>
+    Strumento di consultazione interno. Le norme citate vanno sempre riscontrate sul testo ufficiale prima dell'uso in relazione o in contraddittorio: qui trovi lo stato verificato alla data indicata in ogni voce, non il testo della norma.
+  </footer>
+</div>
+
+<script src="logo.js"></script>
+<script src="norme.js"></script>
+<script src="mapping.js"></script>
+<script>
+(function(){
+  'use strict';
+  var NORME = window.NORME || [], MAPPING = window.MAPPING || [], FASI = window.FASI || [];
+  var GER = window.NORME_GER || {}, STATO = window.NORME_STATO || {};
+  var NAZ = {
+    it:  { label:"Italiana", nota:"Legge, decreto o norma UNI puramente nazionale." },
+    int: { label:"Internazionale", nota:"EN, ISO o EN ISO (anche se recepita come UNI EN), oppure norma estera: BS, DIN, WTA, ASTM, BRE." }
+  };
+  var BYID = {}; NORME.forEach(function(n){ BYID[n.id] = n; });
+
+  var fasiOn = FASI.map(function(f){ return f.id; });   // tutte accese all'avvio
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  /* ---------- marchio: stesso meccanismo del catalogo ---------- */
+  if(window.LOGO){
+    document.querySelectorAll('.rah>i').forEach(function(e){
+      e.style.backgroundImage = "url('" + window.LOGO + "')";
+    });
+    var fav = document.createElement('link');
+    fav.rel = 'icon'; fav.type = 'image/png'; fav.href = window.LOGO;
+    document.head.appendChild(fav);
+  }
+
+  /* ---------- tabs ---------- */
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('on'); });
+      document.querySelectorAll('.pane').forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      document.getElementById(t.dataset.p).classList.add('on');
+    });
+  });
+
+  /* ---------- select famiglie ---------- */
+  var sel = document.getElementById('fam');
+  sel.innerHTML = '<option value="">Scegli il problema...</option>' +
+    MAPPING.map(function(m,i){ return '<option value="'+i+'">'+esc(m.fam)+'</option>'; }).join('');
+  sel.addEventListener('change', render);
+
+  /* ---------- chip fasi ---------- */
+  var cf = document.getElementById('chipFasi');
+  cf.innerHTML = FASI.map(function(f){
+    return '<button class="chip on" data-f="'+f.id+'" title="'+esc(f.desc)+'">'+esc(f.label)+'</button>';
+  }).join('');
+  cf.addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if(!b) return;
+    var id = b.dataset.f, i = fasiOn.indexOf(id);
+    if(i>=0){ if(fasiOn.length===1) return; fasiOn.splice(i,1); b.classList.remove('on'); }
+    else { fasiOn.push(id); b.classList.add('on'); }
+    render();
+  });
+
+  /* ---------- card di una norma ---------- */
+  function cardNorma(n, perche){
+    if(!n) return '';
+    var st = STATO[n.stato] || {label:n.stato, cls:'ok'};
+    var nz = NAZ[n.naz] || null;
+    var h = '<div class="n '+esc(n.stato)+'">';
+    h += '<div class="n-top"><span class="n-sigla">'+esc(n.sigla)+'</span>';
+    if(nz) h += '<span class="badge b-naz b-'+esc(n.naz)+'" title="'+esc(nz.nota)+'">' +
+                '<i class="fl fl-'+esc(n.naz)+'"></i>'+esc(nz.label)+'</span>';
+    h += '<span class="badge b-'+esc(st.cls)+'">'+esc(st.label)+'</span>';
+    h += '<span class="badge b-ger">'+esc((GER[n.ger]||{}).label || n.ger)+'</span>';
+    if(n.aff === 'conf') h += '<span class="badge b-warn">da confermare</span>';
+    h += '</div>';
+    h += '<div class="n-tit">'+esc(n.titolo)+'</div>';
+    h += '<p class="n-cosa">'+esc(n.cosa)+'</p>';
+    if(n.statoNota) h += '<p class="n-nota">'+esc(n.statoNota)+'</p>';
+    if(n.ambito)    h += '<p class="n-ambito">Ambito: '+esc(n.ambito)+'</p>';
+    if(perche)      h += '<p class="n-perche"><b>Perché c\'entra:</b> '+esc(perche)+'</p>';
+    h += '<div class="n-fonte">Verifica: '+esc(n.fonte)+'</div>';
+    h += '</div>';
+    return h;
+  }
+
+  /* ---------- render problema -> norme ---------- */
+  function render(){
+    var out = document.getElementById('out'), av = document.getElementById('avvisi'),
+        sfDiv = document.getElementById('statoFam');
+    var v = sel.value;
+    if(v === ''){
+      sfDiv.innerHTML = '';
+      av.innerHTML = '';
+      out.innerHTML = '<div class="box vuoto">Scegli una famiglia di patologia qui sopra.</div>';
+      return;
+    }
+    var m = MAPPING[+v];
+
+    var etich = { censita:'Famiglia censita', parziale:'Censimento parziale',
+                  quadro:'Solo quadro generale', 'da-censire':'Da censire' };
+    var spieg = {
+      censita:'Dominio verificato voce per voce nei registri: il quadro sotto è completo.',
+      parziale:'Alcune norme sono verificate, altre restano da censire: usa la scheda come base, non come elenco esaustivo.',
+      quadro:'Solo il riferimento quadro. Il dettaglio va citato dal progetto specialistico, non da qui.',
+      'da-censire':'Nessuna norma di famiglia verificata nei registri. Non usare questa scheda come quadro normativo.'
+    };
+    sfDiv.innerHTML = '<div class="stato-fam sf-'+esc(m.stato)+'"><b>'+esc(etich[m.stato]||m.stato)+'.</b> ' +
+      esc(spieg[m.stato]||'') + (m.nota ? ' ' + esc(m.nota) : '') + '</div>';
+
+    var voci = (m.voci||[]).filter(function(x){ return fasiOn.indexOf(x.fase) >= 0; });
+
+    /* avvisi: norme ritirate o in ritiro nel quadro della famiglia */
+    var rit = (m.voci||[]).filter(function(x){
+      var n = BYID[x.n]; return n && (n.stato === 'ritirata' || n.stato === 'in-ritiro');
+    });
+    av.innerHTML = rit.length ? '<div class="avvisi"><h3>Attenzione: nel quadro di questa famiglia ci sono norme non più correnti</h3><ul>' +
+      rit.map(function(x){
+        var n = BYID[x.n];
+        return '<li><b>'+esc(n.sigla)+'</b> ('+esc((STATO[n.stato]||{}).label)+'): '+esc(n.statoNota||'')+'</li>';
+      }).join('') + '</ul></div>' : '';
+
+    if(!voci.length){
+      out.innerHTML = '<div class="box vuoto">' +
+        ((m.voci||[]).length ? 'Nessuna norma per le fasi selezionate. Riattiva una fase qui sopra.'
+                             : 'Questa famiglia non ha ancora norme censite nei registri. È un vuoto dichiarato, non un errore.') +
+        '</div>';
+      return;
+    }
+
+    var h = '';
+    FASI.forEach(function(f){
+      if(fasiOn.indexOf(f.id) < 0) return;
+      var vs = voci.filter(function(x){ return x.fase === f.id; });
+      if(!vs.length) return;
+      h += '<h2 class="fase">'+esc(f.label)+' <span>'+esc(f.desc)+'</span></h2>';
+      vs.forEach(function(x){ h += cardNorma(BYID[x.n], x.perche); });
+    });
+    out.innerHTML = h;
+  }
+
+  /* ---------- registro ---------- */
+  function norm(s){
+    return String(s||'').toLowerCase()
+      .replace(/[àáâä]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i')
+      .replace(/[òóôö]/g,'o').replace(/[ùúûü]/g,'u');
+  }
+  function renderReg(){
+    var q = norm(document.getElementById('q').value.trim());
+    var fs = document.getElementById('fStato').value;
+    var fg = document.getElementById('fGer').value;
+    var fn = document.getElementById('fNaz').value;
+    var terms = q ? q.split(/\s+/) : [];
+
+    var res = NORME.filter(function(n){
+      if(fs && n.stato !== fs) return false;
+      if(fg && n.ger !== fg) return false;
+      if(fn && n.naz !== fn) return false;
+      if(!terms.length) return true;
+      var hay = norm([n.sigla, n.titolo, n.cosa, (n.tag||[]).join(' '), n.statoNota, n.ambito].join(' '));
+      return terms.every(function(t){ return hay.indexOf(t) >= 0; });
+    });
+
+    document.getElementById('conta').textContent =
+      res.length + ' norme su ' + NORME.length + ' nel registro';
+    document.getElementById('reg').innerHTML = res.length
+      ? res.map(function(n){ return cardNorma(n, null); }).join('')
+      : '<div class="box vuoto">Nessuna norma trovata.</div>';
+  }
+  ['q','fStato','fGer','fNaz'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', renderReg);
+  });
+
+  render();
+  renderReg();
+})();
+</script>
+</body>
+</html>
