@@ -390,11 +390,18 @@ window.MAPPING = [
   ]},
 
 /* ---- 23 ----------------------------------------------------------------- */
-{ fam:"Facciate ventilate e rivestimenti aggrappati", slug:"facciate-ventilate", stato:"da-censire",
-  nota:"Nessuna norma verificata nei nostri registri per questa famiglia (ancoraggi, sottostrutture, EOTA di sistema). Da censire: si dichiara il vuoto, non si riempie a sensazione.",
+{ fam:"Facciate ventilate e rivestimenti aggrappati", slug:"facciate-ventilate", stato:"parziale",
+  nota:"Censite le norme del vetro e della facciata continua (UNI 7697, EN 13830, EN 16612, CNR-DT 210). Ancoraggi e sottostrutture ancora da censire.",
   voci:[
     { n:"iso-6781-1-2023", fase:"diagnosi", perche:"Termografia: rileva i distacchi e le anomalie della camera ventilata, ma NON copre il quadro normativo della famiglia." },
-    { n:"bs-8104", fase:"diagnosi", perche:"Esposizione alla pioggia battente della facciata: dato utile, ma parziale rispetto alla famiglia." }
+    { n:"bs-8104", fase:"diagnosi", perche:"Esposizione alla pioggia battente della facciata: dato utile, ma parziale rispetto alla famiglia." },
+    { n:"uni-7697-2021", fase:"progetto", perche:"Dice quale vetro di sicurezza serve in facciata secondo il rischio di contatto o caduta: il riferimento per giustificare o contestare la scelta del vetro di una parete vetrata." },
+    { n:"uni-en-13830-2020", fase:"progetto", perche:"E la norma di prodotto della facciata continua: fissa le prestazioni (tenuta acqua e aria, vento, sisma) che una facciata vetrata deve dichiarare e che in perizia si verificano." },
+    { n:"cnr-dt-210-2013", fase:"progetto", perche:"In assenza di EN armonizzata e il riferimento italiano per il vetro strutturale: serve quando il vetro della facciata porta carico, non solo tampona." },
+    { n:"uni-en-16612-2019", fase:"progetto", perche:"Calcola la resistenza del vetro di tamponamento ai carichi di vento e neve: il dimensionamento della lastra di una parete vetrata." },
+    { n:"uni-en-12600-2004", fase:"prodotti", perche:"Prova del pendolo: classifica il vetro per la sicurezza all'urto delle persone, il dato che qualifica un vetro di facciata come di sicurezza." },
+    { n:"uni-en-1279-2-2018", fase:"collaudo", perche:"Tenuta all'umidita del vetrocamera: quando una facciata vetrata appanna all'interno, e il riferimento per verificare la tenuta del bordo della vetrata isolante." },
+    { n:"uni-11463-2022", fase:"progetto", perche:"Dimensiona la lastra di vetro di tamponamento sotto il vento: complementare alla EN 16612 per la verifica statica del vetro di facciata." }
   ]},
 
 /* ---- 24 ----------------------------------------------------------------- */
@@ -663,8 +670,17 @@ window.MAPPING = [
     { n:"iec-63092-1-2020", fase:"prodotti", perche:"IEC 63092-1:2020 ed EN 50583-1:2016 coesistono (la IEC deriva dalla EN 50583-1): un modulo BIPV puo essere valutato conforme all'una o all'altra, quindi in perizia va letto quale norma la dichiarazione o il certificato del fabbricante richiama davvero, altrimenti il rilievo cade." },
     { n:"iec-63092-2-2020", fase:"progetto", perche:"Parte 2 della serie 63092: norma di SISTEMA e struttura di montaggio (la Parte 1, 63092-1, riguarda il modulo). Riferimento corretto quando il difetto è nella sottostruttura (fissaggi, dilatazione, ventilazione retrostante) e il modulo è integro." },
     { n:"en-iec-61215-1-2021-in-italia-cei-en-iec", fase:"prodotti", perche:"E il metro con cui si giudica se una delaminazione, un ingiallimento dell'incapsulante o un decadimento di potenza sono degrado anomalo o invecchiamento atteso. Attenzione: la 61215 qualifica il modulo in aria libera, non il modulo integrato con ventilazione retrostante ridotta, dove le temperature d'esercizio sono piu alte di quelle di prova." },
-    { n:"iec-61730-1-2023", fase:"prodotti", perche:"Norma di prodotto per la qualifica di sicurezza costruttiva del modulo FV (prevenzione di shock elettrico, rischio meccanico e rischio d'incendio ottenuta per via costruttiva). E la Parte 1 (costruzione): il test al fuoco NON e in questa parte ma nella Parte 2." }
-  ] },
+    { n:"iec-61730-1-2023", fase:"prodotti", perche:"Norma di prodotto per la qualifica di sicurezza costruttiva del modulo FV (prevenzione di shock elettrico, rischio meccanico e rischio d'incendio ottenuta per via costruttiva). E la Parte 1 (costruzione): il test al fuoco NON e in questa parte ma nella Parte 2." },
+    { n:"iec-62446-1-2016", fase:"collaudo", perche:"Definisce le prove di messa in servizio e l'ispezione di un impianto FV: e il riferimento per verificare che il fotovoltaico integrato sia stato installato e funzioni in sicurezza." },
+    { n:"iec-ts-62446-3-2017", fase:"diagnosi", perche:"Termografia dei moduli in esercizio: individua celle calde e difetti del fotovoltaico integrato, utile anche per la prevenzione incendi." },
+    { n:"iec-ts-60904-13-2018", fase:"diagnosi", perche:"Elettroluminescenza dei moduli: rivela microfessure e celle spente che la termografia non vede, per la diagnosi fine del difetto del modulo." },
+    { n:"cei-64-8-712-2024", fase:"progetto", perche:"Sezione 712, nona edizione 2024: le regole elettriche del generatore FV. E il riferimento per la parte impiantistica del fotovoltaico integrato." },
+    { n:"cei-82-25-2-2024", fase:"prodotti", perche:"Guida CEI ai moduli FV: caratteristiche e criteri di scelta del modulo, base per valutare il componente del fotovoltaico integrato." },
+    { n:"dm-37-2008", fase:"esecuzione", perche:"Impone progetto, installatore abilitato e dichiarazione di conformita per l'impianto elettrico del fotovoltaico integrato: la cornice cogente della posa." },
+    { n:"en-13501-5-2016", fase:"progetto", perche:"Classifica la reazione al fuoco esterno della copertura: serve quando il modulo FV e integrato nel tetto e ne cambia il comportamento all'incendio." },
+    { n:"dcprev-14030-2025", fase:"progetto", perche:"Linea guida VVF 2025: l'impianto FV e sempre una modifica sostanziale ai fini antincendio; fissa le misure e la verifica del rischio del fotovoltaico integrato." },
+    { n:"reg-ue-2024-3110", fase:"prodotti", perche:"Nuovo regolamento prodotti da costruzione: la cornice di marcatura e prestazione dei componenti dell'involucro, moduli FV integrati compresi. Piena applicazione dal 08/01/2026." }
+  ]},
 
 /* ---- 39 ----------------------------------------------------------------- */
 { fam:"Pannelli sandwich e sistemi a strati compositi", slug:"sandwich", stato:"da-censire",
